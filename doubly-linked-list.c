@@ -182,16 +182,28 @@ int insertLast(headNode* h, int key) {
     p = h->first;
 	newNode->key = key;
 
-    while(p !=NULL)
-    {
-        p = p->rlink;
-        if(p->rlink = h->first)
-        {
-            break;
-        }
-    }
-    p->rlink = newNode;
+	if(h->first != NULL)
+	{
+    	while(p !=NULL)
+  	  {
+			if(p->rlink == NULL)
+			{
+				p->rlink = newNode;
+				break;
+			}
+   	     p = p->rlink;
+  	  }
+	}
+	else
+	{
+		h->first = newNode;
+		newNode->llink = NULL;
+		newNode->rlink = NULL;
+		return 0;
+	}
+    
 	newNode->llink = p;
+	newNode->rlink = NULL;
 	return 0;
 }
 
@@ -205,17 +217,28 @@ int deleteLast(headNode* h) {
 	listNode* p;
     p = h->first;
 
-    while(p !=NULL)
-    {
-        p = p->rlink;
-        if(p->rlink = h->first)
-        {
-            break;
-        }
-    }
-	p->llink->rlink = h->first;
-	free(p);
+	if(p->rlink == NULL)
+	{
+		h->first = NULL;
+		free(p);
+		return 0;
+	}
+	else
+	{	
+		p = p->rlink;
+ 		while(p !=NULL)
+  		{	
+			if(p->rlink == NULL)
+			{
+				p->llink->rlink = NULL;
+				free(p);
+				return 0;
+			}
+    	    p = p->rlink;
 
+  		}
+	}
+	
 	return 0;
 }
 
@@ -233,7 +256,7 @@ int insertFirst(headNode* h, int key) {
 	newNode->llink = NULL;
 	newNode->rlink = h->first;
 	h->first = newNode;
-	h->first->llink = newNode;
+	
 	
 	return 0;
 }
@@ -290,15 +313,41 @@ int insertNode(headNode* h, int key) {
 	listNode* newNode = (listNode*)malloc(sizeof(listNode));
 	p = h->first;
 	newNode->key = key;
+	newNode->rlink = NULL;
+	newNode->llink = NULL;
 
-	while(p !=NULL && p->key < key)
+	if(h->first = NULL)
 	{
-		p = p->rlink;
+		h->first = newNode;
 	}
-	newNode->llink = p->llink;
-	p->llink->rlink = newNode;
-	p->llink = newNode;
-	newNode->rlink = p;
+	else
+	{
+		if(p->key > key)
+		{
+			h->first = newNode;
+			newNode->rlink = p;
+		}
+		else
+		{
+			while(p !=NULL && p->key < key)
+			{
+				if(p->rlink == NULL)
+				{
+					p->rlink = newNode;
+					newNode->llink = p;
+					return 0;
+				}
+				p = p->rlink;
+			}
+			if(p != NULL)
+			{
+				newNode->llink = p->llink;
+				p->llink->rlink = newNode;
+				p->llink = newNode;
+				newNode->rlink = p;
+			}
+		}
+	}
 
 
 
@@ -314,13 +363,37 @@ int deleteNode(headNode* h, int key) {
 	listNode* p;
 	p = h->first;
 
-	while(p->key == key)
+	if(p->key == key)
+	{
+		h->first = p->rlink;
+		free(p);
+		return 1;
+	}
+	else
 	{
 		p = p->rlink;
+		while(p !=NULL && p->key != key)
+		{
+			if(p->rlink == NULL && p->key !=key)
+			{
+				return 1;
+			}
+			p = p->rlink;
+		}
+		if(p->rlink == NULL)
+		{
+			p->llink->rlink = p->rlink;
+		}
+		else
+		{
+			p->llink->rlink = p->rlink;
+			p->rlink->llink = p->llink;
+		}
+		free(p);
+		return 1;
 	}
-	p->llink->rlink = p->rlink;
-	p->rlink->llink = p->llink;
-	free(p);
+	
+	
 
 	return 1;
 }
