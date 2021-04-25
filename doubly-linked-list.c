@@ -127,6 +127,7 @@ int initialize(headNode** h) {
 		freeList(h);
     }
   	*h = (headNode*)malloc(sizeof(headNode));
+	(*h)->first = NULL;
 	return 1;
 }
 
@@ -225,16 +226,14 @@ int deleteLast(headNode* h) {
  */
 int insertFirst(headNode* h, int key) {
 
-    listNode* p;
 	listNode* newNode = (listNode*)malloc(sizeof(listNode));
-    p = h->first;
 	newNode -> key = key;
 
-
+	
 	newNode->llink = NULL;
-	newNode->rlink = p;
-	p->llink = newNode;
+	newNode->rlink = h->first;
 	h->first = newNode;
+	h->first->llink = newNode;
 	
 	return 0;
 }
